@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
 import { fetchCountry } from '../../api.js';
 import { fmtNum } from '../../utils/format.js';
+import DataBadge from '../DataBadge.jsx';
 
 const COLORS = ['#d4af37', '#06d6a0', '#00b4d8', '#ff8c00', '#e63946'];
 const tooltipStyle = {
@@ -27,14 +28,17 @@ export default function DemographicsPanel({ countries, selected }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-baseline justify-between">
-        <div>
-          <h3 className="font-display text-lg text-financial-text">{data.name}</h3>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-display text-lg text-financial-text">{data.name}</h3>
+            <DataBadge variant="demo" title="Demographic profiles are illustrative — real per-country occupational/age breakdowns will replace this once epidemiological feeds are connected." />
+          </div>
           <p className="text-xs text-financial-muted">
             {fmtNum(data.cases)} cases · {fmtNum(data.deaths)} deaths · {data.casesPer100k} per 100k
           </p>
         </div>
-        <span className="text-[10px] text-financial-muted">
+        <span className="text-[10px] text-financial-muted shrink-0">
           {selected ? 'Drill-down view' : 'Default view (top affected)'}
         </span>
       </div>

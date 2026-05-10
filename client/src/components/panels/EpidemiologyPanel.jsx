@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 import { fmtNum } from '../../utils/format.js';
+import DataBadge from '../DataBadge.jsx';
 
 const tooltipStyle = {
   background: '#0a0e27',
@@ -14,7 +15,7 @@ export default function EpidemiologyPanel({ countries, totals }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Block title="Top 10 by Total Cases" subtitle="Absolute case counts (current snapshot)">
+      <Block title="Top 10 by Total Cases" subtitle="Absolute case counts (current snapshot)" badge="demo">
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={top10} layout="vertical" margin={{ left: 20, right: 16 }}>
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
@@ -30,7 +31,7 @@ export default function EpidemiologyPanel({ countries, totals }) {
         </ResponsiveContainer>
       </Block>
 
-      <Block title="Top 10 by Cases per 100k" subtitle="Normalized for population (fairer comparison)">
+      <Block title="Top 10 by Cases per 100k" subtitle="Normalized for population (fairer comparison)" badge="demo">
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={perCapita} layout="vertical" margin={{ left: 20, right: 16 }}>
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
@@ -42,7 +43,7 @@ export default function EpidemiologyPanel({ countries, totals }) {
         </ResponsiveContainer>
       </Block>
 
-      <Block title="Mortality Rate by Country" subtitle="Deaths / cases ratio" full>
+      <Block title="Mortality Rate by Country" subtitle="Deaths / cases ratio" badge="demo" full>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
           {countries.map((c) => {
             const rate = c.cases ? ((c.deaths / c.cases) * 100).toFixed(1) : '—';
@@ -61,7 +62,7 @@ export default function EpidemiologyPanel({ countries, totals }) {
         </div>
       </Block>
 
-      <Block title="Global Summary" subtitle="Snapshot totals" full>
+      <Block title="Global Summary" subtitle="Snapshot totals" badge="demo" full>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           <Stat label="Total Cases" value={fmtNum(totals?.cases)} accent="text-financial-text" />
           <Stat label="Total Deaths" value={fmtNum(totals?.deaths)} accent="text-virus-red" />
@@ -73,10 +74,15 @@ export default function EpidemiologyPanel({ countries, totals }) {
   );
 }
 
-function Block({ title, subtitle, children, full }) {
+function Block({ title, subtitle, children, full, badge }) {
   return (
-    <div className={`${full ? 'lg:col-span-2' : ''} bg-financial-navy rounded-lg p-4 hairline`}>
-      <div className="mb-3">
+    <div className={`${full ? 'lg:col-span-2' : ''} relative bg-financial-navy rounded-lg p-4 hairline`}>
+      {badge && (
+        <div className="absolute top-3 right-3">
+          <DataBadge variant={badge} />
+        </div>
+      )}
+      <div className="mb-3 pr-16">
         <h3 className="text-sm text-financial-text">{title}</h3>
         {subtitle && <p className="text-[11px] text-financial-muted">{subtitle}</p>}
       </div>

@@ -3,7 +3,7 @@ import { fmtNum, fmtRelative } from '../utils/format.js';
 
 export default function Header({ totals, generatedAt, onRefresh, isRefreshing }) {
   return (
-    <header className="sticky top-0 z-30 backdrop-blur bg-financial-navy/85 hairline-t" style={{ borderBottom: '1px solid rgba(192,192,192,0.08)' }}>
+    <header className="backdrop-blur bg-financial-navy/85 hairline-t" style={{ borderBottom: '1px solid rgba(192,192,192,0.08)' }}>
       <div className="max-w-screen-2xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 rounded-full border border-financial-gold flex items-center justify-center">

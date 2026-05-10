@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import { fmtRelative } from '../../utils/format.js';
+import DataBadge from '../DataBadge.jsx';
 
 const SENTIMENT_COLOR = {
   positive: 'text-virus-safe bg-virus-safe/10 border-virus-safe/30',
@@ -14,6 +15,10 @@ export default function SentimentPanel({ data }) {
 
   return (
     <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-xs uppercase tracking-[0.2em] text-financial-muted">News & Sentiment</h3>
+        <DataBadge variant="real" source="NewsAPI" />
+      </div>
       <div className="grid grid-cols-3 gap-3">
         <SentimentBar label="Positive" pct={sentimentSummary.positivePct} color="#06d6a0" />
         <SentimentBar label="Neutral" pct={sentimentSummary.neutralPct} color="#c0c0c0" />

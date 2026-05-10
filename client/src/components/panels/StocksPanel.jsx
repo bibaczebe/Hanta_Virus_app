@@ -1,11 +1,16 @@
 import { TrendingUp, TrendingDown, ExternalLink, AlertCircle } from 'lucide-react';
 import { fmtCurrency, fmtNum, fmtPct, trendColor } from '../../utils/format.js';
+import DataBadge from '../DataBadge.jsx';
 
 export default function StocksPanel({ data }) {
   if (!data?.stocks?.length) return <div className="text-financial-muted text-sm">No stock data.</div>;
 
   return (
     <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-xs uppercase tracking-[0.2em] text-financial-muted">Biotech / Pharma Equities</h3>
+        <DataBadge variant="real" source="Alpha Vantage" />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <SummaryCard label="Avg Change" value={data.summary.avgChangePercent !== null ? fmtPct(data.summary.avgChangePercent) : '—'}
           accent={data.summary.avgChangePercent >= 0 ? 'text-virus-safe' : 'text-virus-red'} />
