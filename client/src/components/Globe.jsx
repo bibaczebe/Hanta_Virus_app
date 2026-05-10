@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import * as THREE from 'three';
@@ -242,6 +242,36 @@ function AutoRotate({ enabled = true, speed = 0.05 }) {
   return null;
 }
 
+function FocusOnSelected({ selected }) {
+  const targetRef = useRef(null);
+  const settledRef = useRef(true);
+
+  useEffect(() => {
+    if (!selected) {
+      targetRef.current = null;
+      settledRef.current = true;
+      return;
+    }
+    targetRef.current = -(selected.lng + 90) * (Math.PI / 180);
+    settledRef.current = false;
+  }, [selected?.code, selected?.lng]);
+
+  useFrame(({ scene }) => {
+    if (settledRef.current || targetRef.current === null) return;
+    const current = scene.rotation.y;
+    let delta = targetRef.current - current;
+    delta = ((delta + Math.PI) % (Math.PI * 2)) - Math.PI;
+    if (Math.abs(delta) < 0.005) {
+      scene.rotation.y = targetRef.current;
+      settledRef.current = true;
+      return;
+    }
+    scene.rotation.y = current + delta * 0.08;
+  });
+
+  return null;
+}
+
 export default function Globe({ countries = [], onSelect, selected }) {
   const [hovered, setHovered] = useState(null);
   const selectedCode = selected?.code ?? null;
@@ -279,6 +309,7 @@ export default function Globe({ countries = [], onSelect, selected }) {
           enablePan={false}
         />
         <AutoRotate enabled={!hovered && !selectedCode} speed={0.04} />
+        <FocusOnSelected selected={selected} />
       </Canvas>
 
       {hovered && (

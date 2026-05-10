@@ -6,6 +6,7 @@ import Globe from '../components/Globe.jsx';
 import AnalyticsTabs from '../components/AnalyticsTabs.jsx';
 import DataBadge from '../components/DataBadge.jsx';
 import Layout from '../components/Layout.jsx';
+import TopCountriesPanel from '../components/TopCountriesPanel.jsx';
 import { fetchGlobe, fetchStocks, fetchNews } from '../api.js';
 
 export default function Dashboard() {
@@ -122,11 +123,18 @@ export default function Dashboard() {
             )}
           </span>
         </div>
-        <Globe
-          countries={globeQ.data?.countries || []}
-          selected={selected}
-          onSelect={setSelected}
-        />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
+          <Globe
+            countries={globeQ.data?.countries || []}
+            selected={selected}
+            onSelect={setSelected}
+          />
+          <TopCountriesPanel
+            countries={globeQ.data?.countries || []}
+            selected={selected}
+            onSelect={setSelected}
+          />
+        </div>
       </section>
 
       <AnalyticsTabs
