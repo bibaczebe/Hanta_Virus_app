@@ -1,13 +1,30 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
 import { fmtNum } from '../../utils/format.js';
 import DataBadge from '../DataBadge.jsx';
+import CountryFlag from '../CountryFlag.jsx';
 
-const tooltipStyle = {
-  background: '#0a0e27',
-  border: '1px solid rgba(192,192,192,0.15)',
-  borderRadius: 6,
-  fontSize: 12,
-};
+function makeCountryTick(rows) {
+  return function CountryTick({ x, y, payload }) {
+    const row = rows.find((r) => r.name === payload.value);
+    return (
+      <g transform={`translate(${x},${y})`}>
+        {row && (
+          <image
+            href={`https://flagcdn.com/${row.code.toLowerCase()}.svg`}
+            x={-118}
+            y={-8}
+            width={18}
+            height={13}
+            preserveAspectRatio="xMidYMid slice"
+          />
+        )}
+        <text x={-94} y={4} textAnchor="start" fill="#a0aec0" fontSize="11">
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
+}
 
 const barColor = (c, selectedCode) => {
   if (selectedCode && c.code !== selectedCode) return '#4a556880';
@@ -50,10 +67,10 @@ export default function EpidemiologyPanel({ countries, totals, selected, onSelec
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Block title="Top 10 by Total Cases" subtitle="Absolute case counts (current snapshot) · click a bar to filter" badge="demo">
         <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={top10} layout="vertical" margin={{ left: 20, right: 16 }}>
+          <BarChart data={top10} layout="vertical" margin={{ left: 30, right: 16 }}>
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
             <XAxis type="number" tick={{ fill: '#a0aec0', fontSize: 11 }} />
-            <YAxis dataKey="name" type="category" tick={{ fill: '#a0aec0', fontSize: 11 }} width={100} />
+            <YAxis dataKey="name" type="category" tick={makeCountryTick(top10)} width={130} />
             <Tooltip contentStyle={tooltipStyle} formatter={(v) => fmtNum(v)} />
             <Bar
               dataKey="cases"
@@ -71,10 +88,10 @@ export default function EpidemiologyPanel({ countries, totals, selected, onSelec
 
       <Block title="Top 10 by Cases per 100k" subtitle="Normalized for population (fairer comparison) · click a bar to filter" badge="demo">
         <ResponsiveContainer width="100%" height={260}>
-          <BarChart data={perCapita} layout="vertical" margin={{ left: 20, right: 16 }}>
+          <BarChart data={perCapita} layout="vertical" margin={{ left: 30, right: 16 }}>
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
             <XAxis type="number" tick={{ fill: '#a0aec0', fontSize: 11 }} />
-            <YAxis dataKey="name" type="category" tick={{ fill: '#a0aec0', fontSize: 11 }} width={100} />
+            <YAxis dataKey="name" type="category" tick={makeCountryTick(perCapita)} width={130} />
             <Tooltip contentStyle={tooltipStyle} />
             <Bar
               dataKey="casesPer100k"
@@ -106,9 +123,12 @@ export default function EpidemiologyPanel({ countries, totals, selected, onSelec
                 onClick={onSelect ? () => onSelect(c) : undefined}
                 className={cardClasses(isSelected)}
               >
-                <div className="flex items-center justify-between">
-                  <span className={isSelected ? 'text-financial-gold' : 'text-financial-muted'}>{c.name}</span>
-                  <span className="tabular text-virus-red">{rate}%</span>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <CountryFlag code={c.code} name={c.name} size="sm" />
+                    <span className={`truncate ${isSelected ? 'text-financial-gold' : 'text-financial-muted'}`}>{c.name}</span>
+                  </div>
+                  <span className="tabular text-virus-red shrink-0">{rate}%</span>
                 </div>
                 <div className="text-[10px] text-financial-muted mt-1">
                   {fmtNum(c.deaths)} / {fmtNum(c.cases)}
