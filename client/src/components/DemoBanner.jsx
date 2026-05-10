@@ -1,4 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function DemoBanner() {
   return (
@@ -8,9 +9,9 @@ export default function DemoBanner() {
         <p className="flex-1">
           <strong className="font-semibold text-amber-100">Epidemiological data shown is DEMO / illustrative.</strong>{' '}
           Not for clinical, business, or investment decisions. News and biotech market data are real.{' '}
-          <a href="/methodology" className="underline decoration-amber-300/60 hover:text-amber-100 hover:decoration-amber-100">
+          <Link to="/methodology" className="underline decoration-amber-300/60 hover:text-amber-100 hover:decoration-amber-100">
             Read methodology →
-          </a>
+          </Link>
         </p>
       </div>
     </div>
