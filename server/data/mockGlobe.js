@@ -33,22 +33,290 @@ export function buildTimeline(country, days = 30) {
   return result;
 }
 
-export function buildDemographics(country) {
-  return {
+// Demographic profiles are illustrative (DEMO data) but vary per country so
+// the UI is internally consistent: HPS countries (Americas — Andes / Sin
+// Nombre) skew toward agricultural and outdoor exposure, HFRS countries
+// (Eurasia — Hantaan / Seoul / Puumala) skew toward military and forestry.
+// Profiles are replaced with real surveillance breakdowns when WHO/CDC/PAHO
+// feeds are wired up (see /methodology in the client).
+const DEMOGRAPHIC_PROFILES = {
+  // --- Americas (HPS) ---------------------------------------------------
+  US: {
+    ageGroups: [
+      { range: '0-17', pct: 4 },
+      { range: '18-34', pct: 24 },
+      { range: '35-54', pct: 38 },
+      { range: '55-74', pct: 28 },
+      { range: '75+', pct: 6 },
+    ],
+    gender: { male: 71, female: 29 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 22 },
+      { label: 'Construction', pct: 14 },
+      { label: 'Military', pct: 5 },
+      { label: 'Outdoor recreation', pct: 33 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  CA: {
+    ageGroups: [
+      { range: '0-17', pct: 4 },
+      { range: '18-34', pct: 22 },
+      { range: '35-54', pct: 36 },
+      { range: '55-74', pct: 31 },
+      { range: '75+', pct: 7 },
+    ],
+    gender: { male: 68, female: 32 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 24 },
+      { label: 'Construction', pct: 13 },
+      { label: 'Military', pct: 4 },
+      { label: 'Outdoor recreation', pct: 35 },
+      { label: 'Other / unknown', pct: 24 },
+    ],
+  },
+  AR: {
+    ageGroups: [
+      { range: '0-17', pct: 6 },
+      { range: '18-34', pct: 28 },
+      { range: '35-54', pct: 42 },
+      { range: '55-74', pct: 21 },
+      { range: '75+', pct: 3 },
+    ],
+    gender: { male: 65, female: 35 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 46 },
+      { label: 'Construction', pct: 13 },
+      { label: 'Military', pct: 3 },
+      { label: 'Outdoor recreation', pct: 9 },
+      { label: 'Other / unknown', pct: 29 },
+    ],
+  },
+  CL: {
+    ageGroups: [
+      { range: '0-17', pct: 6 },
+      { range: '18-34', pct: 26 },
+      { range: '35-54', pct: 43 },
+      { range: '55-74', pct: 21 },
+      { range: '75+', pct: 4 },
+    ],
+    gender: { male: 67, female: 33 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 44 },
+      { label: 'Construction', pct: 14 },
+      { label: 'Military', pct: 4 },
+      { label: 'Outdoor recreation', pct: 11 },
+      { label: 'Other / unknown', pct: 27 },
+    ],
+  },
+  BR: {
+    ageGroups: [
+      { range: '0-17', pct: 7 },
+      { range: '18-34', pct: 31 },
+      { range: '35-54', pct: 41 },
+      { range: '55-74', pct: 18 },
+      { range: '75+', pct: 3 },
+    ],
+    gender: { male: 69, female: 31 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 49 },
+      { label: 'Construction', pct: 15 },
+      { label: 'Military', pct: 3 },
+      { label: 'Outdoor recreation', pct: 7 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  BO: {
+    ageGroups: [
+      { range: '0-17', pct: 9 },
+      { range: '18-34', pct: 32 },
+      { range: '35-54', pct: 40 },
+      { range: '55-74', pct: 16 },
+      { range: '75+', pct: 3 },
+    ],
+    gender: { male: 66, female: 34 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 52 },
+      { label: 'Construction', pct: 12 },
+      { label: 'Military', pct: 4 },
+      { label: 'Outdoor recreation', pct: 6 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  PA: {
     ageGroups: [
       { range: '0-17', pct: 8 },
-      { range: '18-34', pct: 22 },
+      { range: '18-34', pct: 30 },
       { range: '35-54', pct: 41 },
-      { range: '55-74', pct: 24 },
-      { range: '75+', pct: 5 },
+      { range: '55-74', pct: 18 },
+      { range: '75+', pct: 3 },
     ],
-    gender: { male: 62, female: 38 },
+    gender: { male: 64, female: 36 },
     occupations: [
-      { label: 'Agriculture / forestry', pct: 38 },
-      { label: 'Construction', pct: 14 },
-      { label: 'Military', pct: 9 },
+      { label: 'Agriculture / forestry', pct: 41 },
+      { label: 'Construction', pct: 17 },
+      { label: 'Military', pct: 3 },
       { label: 'Outdoor recreation', pct: 12 },
       { label: 'Other / unknown', pct: 27 },
     ],
-  };
+  },
+  PY: {
+    ageGroups: [
+      { range: '0-17', pct: 9 },
+      { range: '18-34', pct: 31 },
+      { range: '35-54', pct: 41 },
+      { range: '55-74', pct: 16 },
+      { range: '75+', pct: 3 },
+    ],
+    gender: { male: 67, female: 33 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 51 },
+      { label: 'Construction', pct: 13 },
+      { label: 'Military', pct: 3 },
+      { label: 'Outdoor recreation', pct: 7 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  // --- Eurasia (HFRS) ---------------------------------------------------
+  RU: {
+    ageGroups: [
+      { range: '0-17', pct: 3 },
+      { range: '18-34', pct: 26 },
+      { range: '35-54', pct: 39 },
+      { range: '55-74', pct: 26 },
+      { range: '75+', pct: 6 },
+    ],
+    gender: { male: 74, female: 26 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 28 },
+      { label: 'Construction', pct: 11 },
+      { label: 'Military', pct: 22 },
+      { label: 'Outdoor recreation', pct: 14 },
+      { label: 'Other / unknown', pct: 25 },
+    ],
+  },
+  CN: {
+    ageGroups: [
+      { range: '0-17', pct: 4 },
+      { range: '18-34', pct: 24 },
+      { range: '35-54', pct: 41 },
+      { range: '55-74', pct: 27 },
+      { range: '75+', pct: 4 },
+    ],
+    gender: { male: 70, female: 30 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 41 },
+      { label: 'Construction', pct: 16 },
+      { label: 'Military', pct: 9 },
+      { label: 'Outdoor recreation', pct: 8 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  KR: {
+    ageGroups: [
+      { range: '0-17', pct: 2 },
+      { range: '18-34', pct: 28 },
+      { range: '35-54', pct: 36 },
+      { range: '55-74', pct: 28 },
+      { range: '75+', pct: 6 },
+    ],
+    gender: { male: 76, female: 24 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 21 },
+      { label: 'Construction', pct: 12 },
+      { label: 'Military', pct: 28 },
+      { label: 'Outdoor recreation', pct: 13 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  DE: {
+    ageGroups: [
+      { range: '0-17', pct: 3 },
+      { range: '18-34', pct: 21 },
+      { range: '35-54', pct: 36 },
+      { range: '55-74', pct: 33 },
+      { range: '75+', pct: 7 },
+    ],
+    gender: { male: 64, female: 36 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 18 },
+      { label: 'Construction', pct: 12 },
+      { label: 'Military', pct: 6 },
+      { label: 'Outdoor recreation', pct: 38 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+  FI: {
+    ageGroups: [
+      { range: '0-17', pct: 3 },
+      { range: '18-34', pct: 23 },
+      { range: '35-54', pct: 37 },
+      { range: '55-74', pct: 30 },
+      { range: '75+', pct: 7 },
+    ],
+    gender: { male: 68, female: 32 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 36 },
+      { label: 'Construction', pct: 11 },
+      { label: 'Military', pct: 18 },
+      { label: 'Outdoor recreation', pct: 22 },
+      { label: 'Other / unknown', pct: 13 },
+    ],
+  },
+  SE: {
+    ageGroups: [
+      { range: '0-17', pct: 3 },
+      { range: '18-34', pct: 23 },
+      { range: '35-54', pct: 35 },
+      { range: '55-74', pct: 32 },
+      { range: '75+', pct: 7 },
+    ],
+    gender: { male: 65, female: 35 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 24 },
+      { label: 'Construction', pct: 11 },
+      { label: 'Military', pct: 7 },
+      { label: 'Outdoor recreation', pct: 36 },
+      { label: 'Other / unknown', pct: 22 },
+    ],
+  },
+  PL: {
+    ageGroups: [
+      { range: '0-17', pct: 4 },
+      { range: '18-34', pct: 25 },
+      { range: '35-54', pct: 38 },
+      { range: '55-74', pct: 27 },
+      { range: '75+', pct: 6 },
+    ],
+    gender: { male: 67, female: 33 },
+    occupations: [
+      { label: 'Agriculture / forestry', pct: 33 },
+      { label: 'Construction', pct: 14 },
+      { label: 'Military', pct: 8 },
+      { label: 'Outdoor recreation', pct: 19 },
+      { label: 'Other / unknown', pct: 26 },
+    ],
+  },
+};
+
+const FALLBACK_PROFILE = {
+  ageGroups: [
+    { range: '0-17', pct: 5 },
+    { range: '18-34', pct: 26 },
+    { range: '35-54', pct: 39 },
+    { range: '55-74', pct: 25 },
+    { range: '75+', pct: 5 },
+  ],
+  gender: { male: 66, female: 34 },
+  occupations: [
+    { label: 'Agriculture / forestry', pct: 32 },
+    { label: 'Construction', pct: 13 },
+    { label: 'Military', pct: 8 },
+    { label: 'Outdoor recreation', pct: 18 },
+    { label: 'Other / unknown', pct: 29 },
+  ],
+};
+
+export function buildDemographics(country) {
+  return DEMOGRAPHIC_PROFILES[country?.code] ?? FALLBACK_PROFILE;
 }
