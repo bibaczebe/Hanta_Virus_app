@@ -12,15 +12,26 @@ const TABS = [
   { id: 'sentiment', label: 'News & Sentiment', icon: <Newspaper className="w-3.5 h-3.5" /> },
 ];
 
-export default function AnalyticsTabs({ globe, stocks, news, selected }) {
+export default function AnalyticsTabs({ globe, stocks, news, selected, onSelect, onClear }) {
   const [active, setActive] = useState('epi');
 
   return (
     <section className="max-w-screen-2xl mx-auto px-6 pt-8 pb-12">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 gap-3">
         <h2 className="text-xs uppercase tracking-[0.25em] text-financial-muted">Analytics</h2>
         {selected && (
-          <span className="text-xs text-financial-gold">Filtered: {selected.name}</span>
+          <span className="text-xs text-financial-gold flex items-center gap-2">
+            Filtered: {selected.name}
+            {onClear && (
+              <button
+                type="button"
+                onClick={onClear}
+                className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-financial-gold/40 hover:bg-financial-gold/10 transition"
+              >
+                Clear
+              </button>
+            )}
+          </span>
         )}
       </div>
       <div className="bg-financial-card rounded-xl hairline shadow-card overflow-hidden">
@@ -43,7 +54,14 @@ export default function AnalyticsTabs({ globe, stocks, news, selected }) {
         </div>
 
         <div className="p-5">
-          {active === 'epi' && <EpidemiologyPanel countries={globe?.countries || []} totals={globe?.totals} />}
+          {active === 'epi' && (
+            <EpidemiologyPanel
+              countries={globe?.countries || []}
+              totals={globe?.totals}
+              selected={selected}
+              onSelect={onSelect}
+            />
+          )}
           {active === 'demo' && <DemographicsPanel countries={globe?.countries || []} selected={selected} />}
           {active === 'stocks' && <StocksPanel data={stocks} />}
           {active === 'sentiment' && <SentimentPanel data={news} />}

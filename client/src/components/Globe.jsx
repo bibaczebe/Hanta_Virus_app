@@ -126,7 +126,7 @@ function Graticule() {
   );
 }
 
-function OutbreakMarkers({ countries, onSelect, hovered, setHovered }) {
+function OutbreakMarkers({ countries, onSelect, hovered, setHovered, selectedCode }) {
   return (
     <group>
       {countries.map((c) => {
@@ -135,27 +135,35 @@ function OutbreakMarkers({ countries, onSelect, hovered, setHovered }) {
         const color = severityColor(severity);
         const size = 0.025 + Math.min(0.06, c.cases / 80000);
         const isHover = hovered?.code === c.code;
+        const isSelected = selectedCode === c.code;
+        const scale = isSelected ? 2 : isHover ? 1.6 : 1;
         return (
-          <mesh
-            key={c.code}
-            position={pos}
-            onPointerOver={(e) => {
-              e.stopPropagation();
-              setHovered(c);
-              document.body.style.cursor = 'pointer';
-            }}
-            onPointerOut={() => {
-              setHovered(null);
-              document.body.style.cursor = 'default';
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect?.(c);
-            }}
-          >
-            <sphereGeometry args={[size * (isHover ? 1.6 : 1), 16, 16]} />
-            <meshBasicMaterial color={color} />
-          </mesh>
+          <group key={c.code} position={pos}>
+            {isSelected && (
+              <mesh>
+                <sphereGeometry args={[size * 2.6, 16, 16]} />
+                <meshBasicMaterial color="#d4af37" transparent opacity={0.18} />
+              </mesh>
+            )}
+            <mesh
+              onPointerOver={(e) => {
+                e.stopPropagation();
+                setHovered(c);
+                document.body.style.cursor = 'pointer';
+              }}
+              onPointerOut={() => {
+                setHovered(null);
+                document.body.style.cursor = 'default';
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect?.(c);
+              }}
+            >
+              <sphereGeometry args={[size * scale, 16, 16]} />
+              <meshBasicMaterial color={color} />
+            </mesh>
+          </group>
         );
       })}
     </group>
@@ -234,8 +242,9 @@ function AutoRotate({ enabled = true, speed = 0.05 }) {
   return null;
 }
 
-export default function Globe({ countries = [], onSelect }) {
+export default function Globe({ countries = [], onSelect, selected }) {
   const [hovered, setHovered] = useState(null);
+  const selectedCode = selected?.code ?? null;
 
   return (
     <div className="relative w-full h-[480px] bg-financial-charcoal rounded-xl hairline overflow-hidden shadow-card">
@@ -257,6 +266,7 @@ export default function Globe({ countries = [], onSelect }) {
             onSelect={onSelect}
             hovered={hovered}
             setHovered={setHovered}
+            selectedCode={selectedCode}
           />
           <ParticleSwarm countries={countries} />
         </Suspense>
@@ -268,7 +278,7 @@ export default function Globe({ countries = [], onSelect }) {
           maxDistance={10}
           enablePan={false}
         />
-        <AutoRotate enabled={!hovered} speed={0.04} />
+        <AutoRotate enabled={!hovered && !selectedCode} speed={0.04} />
       </Canvas>
 
       {hovered && (
