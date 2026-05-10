@@ -66,7 +66,7 @@ export default function OverviewMetrics({ globe, stocks, news }) {
         <h2 className="text-xs uppercase tracking-[0.25em] text-financial-muted flex items-center gap-2">
           <BarChart3 className="w-3.5 h-3.5" /> Overview
         </h2>
-        <span className="text-[10px] text-financial-muted">Updated every 6 hours · cached</span>
+        <span className="text-[10px] text-financial-muted">Auto-refreshes: globe 6h · stocks 4h · news 30m</span>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {cards.map((c) => (

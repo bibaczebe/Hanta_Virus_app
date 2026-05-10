@@ -11,9 +11,24 @@ export default function Dashboard() {
   const qc = useQueryClient();
   const [selected, setSelected] = useState(null);
 
-  const globeQ = useQuery({ queryKey: ['globe'], queryFn: fetchGlobe });
-  const stocksQ = useQuery({ queryKey: ['stocks'], queryFn: () => fetchStocks() });
-  const newsQ = useQuery({ queryKey: ['news'], queryFn: () => fetchNews({ limit: 16 }) });
+  const globeQ = useQuery({
+    queryKey: ['globe'],
+    queryFn: fetchGlobe,
+    refetchInterval: 6 * 60 * 60 * 1000,
+    staleTime: 6 * 60 * 60 * 1000,
+  });
+  const stocksQ = useQuery({
+    queryKey: ['stocks'],
+    queryFn: () => fetchStocks(),
+    refetchInterval: 4 * 60 * 60 * 1000,
+    staleTime: 4 * 60 * 60 * 1000,
+  });
+  const newsQ = useQuery({
+    queryKey: ['news'],
+    queryFn: () => fetchNews({ limit: 16 }),
+    refetchInterval: 30 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
+  });
 
   const isRefreshing = globeQ.isFetching || stocksQ.isFetching || newsQ.isFetching;
   const errored = globeQ.isError || stocksQ.isError || newsQ.isError;
