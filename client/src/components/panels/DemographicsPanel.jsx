@@ -3,14 +3,9 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis
 import { fetchCountry } from '../../api.js';
 import { fmtNum } from '../../utils/format.js';
 import DataBadge from '../DataBadge.jsx';
+import ChartTooltip, { tooltipFormatters } from '../ChartTooltip.jsx';
 
 const COLORS = ['#d4af37', '#06d6a0', '#00b4d8', '#ff8c00', '#e63946'];
-const tooltipStyle = {
-  background: '#0a0e27',
-  border: '1px solid rgba(192,192,192,0.15)',
-  borderRadius: 6,
-  fontSize: 12,
-};
 
 export default function DemographicsPanel({ countries, selected }) {
   const target = selected || countries[0];
@@ -50,7 +45,10 @@ export default function DemographicsPanel({ countries, selected }) {
               <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
               <XAxis dataKey="range" tick={{ fill: '#a0aec0', fontSize: 11 }} />
               <YAxis tick={{ fill: '#a0aec0', fontSize: 11 }} />
-              <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${v}%`} />
+              <Tooltip
+                cursor={{ fill: 'rgba(212,175,55,0.06)' }}
+                content={<ChartTooltip valueFormatter={tooltipFormatters.percent} />}
+              />
               <Bar dataKey="pct" fill="#d4af37" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -74,7 +72,7 @@ export default function DemographicsPanel({ countries, selected }) {
                 <Cell fill="#00b4d8" />
                 <Cell fill="#d4af37" />
               </Pie>
-              <Tooltip contentStyle={tooltipStyle} formatter={(v) => `${v}%`} />
+              <Tooltip content={<ChartTooltip valueFormatter={tooltipFormatters.percent} />} />
             </PieChart>
           </ResponsiveContainer>
         </Block>
@@ -102,7 +100,7 @@ export default function DemographicsPanel({ countries, selected }) {
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
             <XAxis dataKey="date" tick={{ fill: '#a0aec0', fontSize: 10 }} interval={4} />
             <YAxis tick={{ fill: '#a0aec0', fontSize: 11 }} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip content={<ChartTooltip />} />
             <Line type="monotone" dataKey="cases" stroke="#d4af37" strokeWidth={2} dot={false} />
             <Line type="monotone" dataKey="deaths" stroke="#e63946" strokeWidth={2} dot={false} />
           </LineChart>

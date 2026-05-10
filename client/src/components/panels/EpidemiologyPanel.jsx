@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 import { fmtNum } from '../../utils/format.js';
 import DataBadge from '../DataBadge.jsx';
 import CountryFlag from '../CountryFlag.jsx';
+import ChartTooltip from '../ChartTooltip.jsx';
 
 function makeCountryTick(rows) {
   return function CountryTick({ x, y, payload }) {
@@ -71,7 +72,7 @@ export default function EpidemiologyPanel({ countries, totals, selected, onSelec
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
             <XAxis type="number" tick={{ fill: '#a0aec0', fontSize: 11 }} />
             <YAxis dataKey="name" type="category" tick={makeCountryTick(top10)} width={130} />
-            <Tooltip contentStyle={tooltipStyle} formatter={(v) => fmtNum(v)} />
+            <Tooltip cursor={{ fill: 'rgba(212,175,55,0.06)' }} content={<ChartTooltip />} />
             <Bar
               dataKey="cases"
               radius={[0, 4, 4, 0]}
@@ -92,7 +93,10 @@ export default function EpidemiologyPanel({ countries, totals, selected, onSelec
             <CartesianGrid strokeDasharray="2 4" stroke="#4a5568" opacity={0.25} />
             <XAxis type="number" tick={{ fill: '#a0aec0', fontSize: 11 }} />
             <YAxis dataKey="name" type="category" tick={makeCountryTick(perCapita)} width={130} />
-            <Tooltip contentStyle={tooltipStyle} />
+            <Tooltip
+              cursor={{ fill: 'rgba(212,175,55,0.06)' }}
+              content={<ChartTooltip valueFormatter={(v) => (typeof v === 'number' ? `${v.toFixed(2)} / 100k` : v)} />}
+            />
             <Bar
               dataKey="casesPer100k"
               radius={[0, 4, 4, 0]}
