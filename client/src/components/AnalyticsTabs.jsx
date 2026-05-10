@@ -35,13 +35,13 @@ export default function AnalyticsTabs({ globe, stocks, news, selected, onSelect,
         )}
       </div>
       <div className="bg-financial-card rounded-xl hairline shadow-card overflow-hidden">
-        <div className="flex items-center gap-1 border-b border-financial-slate/30 px-3 pt-3">
+        <div className="flex items-center gap-1 border-b border-financial-slate/30 px-3 pt-3 overflow-x-auto whitespace-nowrap snap-x snap-mandatory">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setActive(t.id)}
               role="tab"
-              className={`flex items-center gap-2 px-4 py-2 text-xs rounded-t-md transition ${
+              className={`shrink-0 snap-start flex items-center gap-2 px-4 py-2 text-xs rounded-t-md transition ${
                 active === t.id
                   ? 'bg-financial-navy text-financial-gold border-t border-l border-r border-financial-gold/30'
                   : 'text-financial-muted hover:text-financial-text'

@@ -274,10 +274,20 @@ function FocusOnSelected({ selected }) {
 
 export default function Globe({ countries = [], onSelect, selected }) {
   const [hovered, setHovered] = useState(null);
+  const [isTouch, setIsTouch] = useState(false);
   const selectedCode = selected?.code ?? null;
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(pointer: coarse), (max-width: 767px)');
+    const update = () => setIsTouch(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
   return (
-    <div className="relative w-full h-[480px] bg-financial-charcoal rounded-xl hairline overflow-hidden shadow-card">
+    <div className="relative w-full h-[320px] md:h-[480px] bg-financial-charcoal rounded-xl hairline overflow-hidden shadow-card">
       <Canvas
         className="globe-canvas"
         camera={{ position: [0, 0, 6], fov: 45 }}
@@ -308,7 +318,7 @@ export default function Globe({ countries = [], onSelect, selected }) {
           maxDistance={10}
           enablePan={false}
         />
-        <AutoRotate enabled={!hovered && !selectedCode} speed={0.04} />
+        <AutoRotate enabled={!hovered && !selectedCode && !isTouch} speed={0.04} />
         <FocusOnSelected selected={selected} />
       </Canvas>
 

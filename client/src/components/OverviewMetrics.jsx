@@ -74,7 +74,7 @@ export default function OverviewMetrics({ globe, stocks, news }) {
             <div className="absolute top-2 right-2">
               {c.badge && <DataBadge variant={c.badge.variant} source={c.badge.source} />}
             </div>
-            <div className="flex items-center gap-2 mb-3 pr-16">
+            <div className="flex items-center gap-2 mb-3 pr-14 md:pr-20">
               <span className={c.accent}>{c.icon}</span>
               <span className="text-[10px] uppercase tracking-wider text-financial-muted">{c.label}</span>
             </div>

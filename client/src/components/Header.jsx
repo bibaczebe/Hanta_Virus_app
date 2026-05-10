@@ -23,20 +23,24 @@ export default function Header({ totals, generatedAt, onRefresh, isRefreshing })
   return (
     <header className="backdrop-blur bg-financial-navy/85 border-b border-financial-slate/20">
       <div className="max-w-screen-2xl mx-auto px-6 h-14 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-full border border-financial-gold flex items-center justify-center">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-7 h-7 rounded-full border border-financial-gold flex items-center justify-center shrink-0">
             <Globe2 className="w-4 h-4 text-financial-gold" />
           </div>
-          <div className="leading-tight">
-            <h1 className="font-display text-base text-financial-text tracking-tight">HantaTracker</h1>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-financial-muted">Global Hantavirus Intelligence</p>
+          <div className="leading-tight min-w-0">
+            <h1 className="font-display text-base text-financial-text tracking-tight truncate">HantaTracker</h1>
+            <p className="hidden md:block text-[10px] uppercase tracking-[0.2em] text-financial-muted">
+              Global Hantavirus Intelligence
+            </p>
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-6 text-xs text-financial-muted">
-          <Stat label="Cases" value={fmtNum(totals?.cases)} accent="text-financial-text" />
-          <Stat label="Deaths" value={fmtNum(totals?.deaths)} accent="text-virus-red" />
-          <Stat label="New (24h)" value={fmtNum(totals?.newCases)} accent="text-financial-gold" />
+        <div className="flex items-center gap-3 md:gap-6 text-xs text-financial-muted shrink-0">
+          <div className="hidden md:flex items-center gap-6">
+            <Stat label="Cases" value={fmtNum(totals?.cases)} accent="text-financial-text" />
+            <Stat label="Deaths" value={fmtNum(totals?.deaths)} accent="text-virus-red" />
+            <Stat label="New (24h)" value={fmtNum(totals?.newCases)} accent="text-financial-gold" />
+          </div>
           {onRefresh ? (
             <button
               type="button"

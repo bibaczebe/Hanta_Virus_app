@@ -9,7 +9,6 @@ const STYLES = {
 export default function DataBadge({ variant = 'demo', source, title }) {
   const cls = STYLES[variant] ?? STYLES.demo;
   const Icon = variant === 'real' ? CheckCircle2 : AlertTriangle;
-  const label = variant === 'real' ? (source ? `Real · ${source}` : 'Real') : 'Demo';
   const tooltip =
     title ??
     (variant === 'real'
@@ -17,20 +16,31 @@ export default function DataBadge({ variant = 'demo', source, title }) {
       : 'Illustrative / placeholder data — click for methodology');
 
   const baseCls = `inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium uppercase tracking-wider border transition ${cls}`;
+  const labelInner = (
+    <>
+      <Icon className="w-2.5 h-2.5" />
+      {variant === 'real' ? (
+        <>
+          Real
+          {source && <span className="hidden md:inline ml-1">· {source}</span>}
+        </>
+      ) : (
+        'Demo'
+      )}
+    </>
+  );
 
   if (variant === 'demo') {
     return (
       <Link to="/methodology" title={tooltip} className={baseCls}>
-        <Icon className="w-2.5 h-2.5" />
-        {label}
+        {labelInner}
       </Link>
     );
   }
 
   return (
     <span title={tooltip} className={baseCls}>
-      <Icon className="w-2.5 h-2.5" />
-      {label}
+      {labelInner}
     </span>
   );
 }
